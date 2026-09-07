@@ -685,7 +685,15 @@ body {
   font-feature-settings: "tnum"; -webkit-font-smoothing: antialiased; letter-spacing: -0.01em;
 }
 .mono { font-family: 'IBM Plex Mono', monospace; font-feature-settings: "tnum", "zero"; }
-#app { max-width: 1600px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+/* v123: layout využívá celou šířku okna. Strop 2400 px je jen pojistka
+   pro ultrawide monitory, aby se tabulky a grafy nenatáhly do nesmyslu. */
+#app { width: 100%; max-width: 2400px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+/* Na širokých monitorech větší boční odsazení, ať obsah nelepí na okraj */
+@media (min-width: 1700px) {
+  header.app-header { padding-left: 2.5rem; padding-right: 2.5rem; }
+  nav.tabs { padding-left: 2.5rem; padding-right: 2.5rem; }
+  main.tab-content { padding-left: 2.5rem; padding-right: 2.5rem; }
+}
 header.app-header {
   background: var(--yf-blue);
   border-bottom: 1px solid rgba(0,0,0,0.15);
