@@ -643,7 +643,7 @@ body.mobile-mode .tab[data-tab="kalendar"],
 body.mobile-mode .tab[data-tab="actions"],
 body.mobile-mode .tab[data-tab="actionplan"],
 body.mobile-mode .tab[data-tab="talent"],
-body.mobile-mode .tab[data-tab="vyroba"],
+body.mobile-mode .tab[data-tab="efektivita"],
 body.mobile-mode .tab[data-tab="vykon"],
 body.mobile-mode .tab[data-tab="analyza"],
 body.mobile-mode .tab[data-tab="legenda"] {
@@ -794,7 +794,7 @@ nav.tabs::-webkit-scrollbar { display: none; }
 .tab[data-tab="actions"]   { --tab-color: #10B981; }  /* zelená - řešení */
 .tab[data-tab="actionplan"]{ --tab-color: #F97316; }  /* oranžová - akční plán */
 .tab[data-tab="talent"]    { --tab-color: #14B8A6; }  /* teal - rozvoj lidí */
-.tab[data-tab="vyroba"]    { --tab-color: #0EA5E9; }  /* sky - výroba & engineering */
+.tab[data-tab="efektivita"]    { --tab-color: #0EA5E9; }  /* sky - efektivita výroby */
 .tab[data-tab="vykon"]     { --tab-color: #EAB308; }  /* žlutá - energie */
 .tab[data-tab="analyza"]   { --tab-color: #EC4899; }  /* magenta - data */
 .tab[data-tab="legenda"]   { --tab-color: #14B8A6; }  /* teal - dokumentace */
@@ -2407,178 +2407,178 @@ body.mobile-mode .date-input { width: 100%; }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
 
 /* ==================================================================
-   VÝROBA & ENGINEERING (#pane-vyroba)
+   EFEKTIVITA VÝROBY (#pane-efektivita)
    Styly převzaté ze samostatného dashboardu Production & Engineering.
    Vše je zapouzdřené do vlastní záložky: proměnné jsou definované na
-   #pane-vyroba (ne na :root), aby nepřepsaly motivy zbytku aplikace,
+   #pane-efektivita (ne na :root), aby nepřepsaly motivy zbytku aplikace,
    a kolidující třídy (.tab, .header, .legend-item, .section-title)
    jsou přejmenované na pe-*.
    ================================================================== */
-  #pane-vyroba { --dark: #1B3A5C; --mid: #2E6DA4; --light: #D6E4F0; --accent: #E8A020; --green: #27AE60; --red: #C0392B; --amber: #F39C12; --prod: #3498DB; --eng: #E74C3C; --log: #2ECC71; --it: #9B59B6; --bg: #F0F4F8; --card: #FFFFFF; --text: #2C3E50; --muted: #7F8C8D; --border: #DDE3EA; }
-  #pane-vyroba { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 13px; }
+  #pane-efektivita { --dark: #1B3A5C; --mid: #2E6DA4; --light: #D6E4F0; --accent: #E8A020; --green: #27AE60; --red: #C0392B; --amber: #F39C12; --prod: #3498DB; --eng: #E74C3C; --log: #2ECC71; --it: #9B59B6; --bg: #F0F4F8; --card: #FFFFFF; --text: #2C3E50; --muted: #7F8C8D; --border: #DDE3EA; }
+  #pane-efektivita { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 13px; }
   /* HEADER */
-  #pane-vyroba .pe-header { background: linear-gradient(135deg, var(--dark) 0%, var(--mid) 100%); color: white; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
-  #pane-vyroba .pe-header h1 { font-size: 18px; font-weight: 700; letter-spacing: .3px; }
-  #pane-vyroba .pe-header .subtitle { font-size: 11px; opacity: .75; margin-top: 2px; }
-  #pane-vyroba .pe-header-right { display: flex; gap: 8px; align-items: center; }
-  #pane-vyroba .badge { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600; }
-  #pane-vyroba .badge.accent { background: var(--accent); border-color: var(--accent); }
+  #pane-efektivita .pe-header { background: linear-gradient(135deg, var(--dark) 0%, var(--mid) 100%); color: white; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+  #pane-efektivita .pe-header h1 { font-size: 18px; font-weight: 700; letter-spacing: .3px; }
+  #pane-efektivita .pe-header .subtitle { font-size: 11px; opacity: .75; margin-top: 2px; }
+  #pane-efektivita .pe-header-right { display: flex; gap: 8px; align-items: center; }
+  #pane-efektivita .badge { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600; }
+  #pane-efektivita .badge.accent { background: var(--accent); border-color: var(--accent); }
   /* CONTROLS */
-  #pane-vyroba .controls { background: var(--card); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-  #pane-vyroba .controls label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
-  #pane-vyroba .controls select,
-  #pane-vyroba .controls input { border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; font-size: 12px; color: var(--text); background: white; cursor: pointer; outline: none; }
-  #pane-vyroba .controls select:focus,
-  #pane-vyroba .controls input:focus { border-color: var(--mid); box-shadow: 0 0 0 2px rgba(46,109,164,.15); }
-  #pane-vyroba .tab-group { display: flex; background: var(--bg); border-radius: 8px; padding: 3px; gap: 2px; }
-  #pane-vyroba .pe-tab { padding: 5px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all .15s; }
-  #pane-vyroba .pe-tab.active { background: var(--dark); color: white; }
-  #pane-vyroba .pe-tab:hover:not(.active) { background: var(--light); color: var(--dark); }
+  #pane-efektivita .controls { background: var(--card); border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  #pane-efektivita .controls label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  #pane-efektivita .controls select,
+  #pane-efektivita .controls input { border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; font-size: 12px; color: var(--text); background: white; cursor: pointer; outline: none; }
+  #pane-efektivita .controls select:focus,
+  #pane-efektivita .controls input:focus { border-color: var(--mid); box-shadow: 0 0 0 2px rgba(46,109,164,.15); }
+  #pane-efektivita .tab-group { display: flex; background: var(--bg); border-radius: 8px; padding: 3px; gap: 2px; }
+  #pane-efektivita .pe-tab { padding: 5px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all .15s; }
+  #pane-efektivita .pe-tab.active { background: var(--dark); color: white; }
+  #pane-efektivita .pe-tab:hover:not(.active) { background: var(--light); color: var(--dark); }
   /* LAYOUT */
-  #pane-vyroba .main { padding: 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+  #pane-efektivita .main { padding: 16px 24px; display: flex; flex-direction: column; gap: 14px; }
   /* KPI CARDS */
-  #pane-vyroba .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  #pane-vyroba .kpi-card { background: var(--card); border-radius: 10px; padding: 14px 18px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; position: relative; overflow: hidden; min-height: 140px; }
-  #pane-vyroba .kpi-card::before { content:''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 10px 0 0 10px; }
-  #pane-vyroba .kpi-card.green::before { background: var(--green); }
-  #pane-vyroba .kpi-card.red::before { background: var(--red); }
-  #pane-vyroba .kpi-card.amber::before { background: var(--amber); }
-  #pane-vyroba .kpi-card.blue::before { background: var(--mid); }
-  #pane-vyroba .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
-  #pane-vyroba .kpi-value { font-size: 26px; font-weight: 800; line-height: 1; }
-  #pane-vyroba .kpi-value.green { color: var(--green); }
-  #pane-vyroba .kpi-value.red { color: var(--red); }
-  #pane-vyroba .kpi-value.amber { color: var(--amber); }
-  #pane-vyroba .kpi-value.blue { color: var(--mid); }
-  #pane-vyroba .kpi-sub { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
-  #pane-vyroba .trend-up { color: var(--green); font-weight: 700; }
-  #pane-vyroba .trend-down { color: var(--red); font-weight: 700; }
+  #pane-efektivita .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  #pane-efektivita .kpi-card { background: var(--card); border-radius: 10px; padding: 14px 18px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 4px; position: relative; overflow: hidden; min-height: 140px; }
+  #pane-efektivita .kpi-card::before { content:''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 10px 0 0 10px; }
+  #pane-efektivita .kpi-card.green::before { background: var(--green); }
+  #pane-efektivita .kpi-card.red::before { background: var(--red); }
+  #pane-efektivita .kpi-card.amber::before { background: var(--amber); }
+  #pane-efektivita .kpi-card.blue::before { background: var(--mid); }
+  #pane-efektivita .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
+  #pane-efektivita .kpi-value { font-size: 26px; font-weight: 800; line-height: 1; }
+  #pane-efektivita .kpi-value.green { color: var(--green); }
+  #pane-efektivita .kpi-value.red { color: var(--red); }
+  #pane-efektivita .kpi-value.amber { color: var(--amber); }
+  #pane-efektivita .kpi-value.blue { color: var(--mid); }
+  #pane-efektivita .kpi-sub { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  #pane-efektivita .trend-up { color: var(--green); font-weight: 700; }
+  #pane-efektivita .trend-down { color: var(--red); font-weight: 700; }
   /* PANELS */
-  #pane-vyroba .panel { background: var(--card); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
-  #pane-vyroba .panel-header { background: var(--dark); color: white; padding: 10px 16px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
-  #pane-vyroba .panel-header .ph-right { display: flex; gap: 8px; align-items: center; }
-  #pane-vyroba .panel-body { padding: 14px 16px; }
+  #pane-efektivita .panel { background: var(--card); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
+  #pane-efektivita .panel-header { background: var(--dark); color: white; padding: 10px 16px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+  #pane-efektivita .panel-header .ph-right { display: flex; gap: 8px; align-items: center; }
+  #pane-efektivita .panel-body { padding: 14px 16px; }
   /* TWO COLUMN */
-  #pane-vyroba .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  #pane-vyroba .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  #pane-efektivita .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  #pane-efektivita .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
   /* CHARTS */
-  #pane-vyroba .chart-wrap { position: relative; }
-  #pane-vyroba .chart-wrap canvas { max-height: 220px; }
-  #pane-vyroba .chart-wrap.tall canvas { max-height: 300px; }
-  #pane-vyroba .chart-wrap.short canvas { max-height: 160px; }
+  #pane-efektivita .chart-wrap { position: relative; }
+  #pane-efektivita .chart-wrap canvas { max-height: 220px; }
+  #pane-efektivita .chart-wrap.tall canvas { max-height: 300px; }
+  #pane-efektivita .chart-wrap.short canvas { max-height: 160px; }
   /* TOP 3 TABLE */
-  #pane-vyroba .top3-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  #pane-vyroba .top3-panel { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-  #pane-vyroba .top3-header { padding: 8px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: white; }
-  #pane-vyroba .top3-header.best { background: var(--green); }
-  #pane-vyroba .top3-header.worst { background: var(--red); }
-  #pane-vyroba .top3-header.impr { background: var(--mid); }
-  #pane-vyroba .top3-header.decl { background: #8B0000; }
-  #pane-vyroba .top3-row { display: flex; align-items: center; padding: 7px 12px; border-bottom: 1px solid var(--border); background: white; gap: 8px; }
-  #pane-vyroba .top3-row:last-child { border-bottom: none; }
-  #pane-vyroba .top3-row:nth-child(even) { background: #FAFBFC; }
-  #pane-vyroba .top3-rank { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: white; flex-shrink: 0; }
-  #pane-vyroba .top3-rank.r1 { background: #F39C12; }
-  #pane-vyroba .top3-rank.r2 { background: #7F8C8D; }
-  #pane-vyroba .top3-rank.r3 { background: #CD7F32; }
-  #pane-vyroba .top3-name { flex: 1; font-size: 12px; font-weight: 600; }
-  #pane-vyroba .top3-val { font-size: 13px; font-weight: 800; }
-  #pane-vyroba .top3-val.green { color: var(--green); }
-  #pane-vyroba .top3-val.red { color: var(--red); }
-  #pane-vyroba .top3-val.amber { color: var(--amber); }
-  #pane-vyroba .top3-bar { height: 4px; background: var(--bg); border-radius: 2px; margin-top: 2px; overflow: hidden; }
-  #pane-vyroba .top3-bar-fill { height: 100%; border-radius: 2px; }
+  #pane-efektivita .top3-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  #pane-efektivita .top3-panel { border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  #pane-efektivita .top3-header { padding: 8px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: white; }
+  #pane-efektivita .top3-header.best { background: var(--green); }
+  #pane-efektivita .top3-header.worst { background: var(--red); }
+  #pane-efektivita .top3-header.impr { background: var(--mid); }
+  #pane-efektivita .top3-header.decl { background: #8B0000; }
+  #pane-efektivita .top3-row { display: flex; align-items: center; padding: 7px 12px; border-bottom: 1px solid var(--border); background: white; gap: 8px; }
+  #pane-efektivita .top3-row:last-child { border-bottom: none; }
+  #pane-efektivita .top3-row:nth-child(even) { background: #FAFBFC; }
+  #pane-efektivita .top3-rank { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: white; flex-shrink: 0; }
+  #pane-efektivita .top3-rank.r1 { background: #F39C12; }
+  #pane-efektivita .top3-rank.r2 { background: #7F8C8D; }
+  #pane-efektivita .top3-rank.r3 { background: #CD7F32; }
+  #pane-efektivita .top3-name { flex: 1; font-size: 12px; font-weight: 600; }
+  #pane-efektivita .top3-val { font-size: 13px; font-weight: 800; }
+  #pane-efektivita .top3-val.green { color: var(--green); }
+  #pane-efektivita .top3-val.red { color: var(--red); }
+  #pane-efektivita .top3-val.amber { color: var(--amber); }
+  #pane-efektivita .top3-bar { height: 4px; background: var(--bg); border-radius: 2px; margin-top: 2px; overflow: hidden; }
+  #pane-efektivita .top3-bar-fill { height: 100%; border-radius: 2px; }
   /* LINE TABLE */
-  #pane-vyroba .line-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-  #pane-vyroba .line-table th { background: var(--dark); color: white; padding: 7px 8px; text-align: center; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; position: sticky; top: 0; z-index: 1; }
-  #pane-vyroba .line-table th:first-child { text-align: left; min-width: 110px; }
-  #pane-vyroba .line-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: center; }
-  #pane-vyroba .line-table td:first-child { text-align: left; font-weight: 600; color: var(--dark); }
-  #pane-vyroba .line-table tr:nth-child(even) td { background: #FAFBFC; }
-  #pane-vyroba .line-table tr:hover td { background: var(--light) !important; }
-  #pane-vyroba .line-table .total-row td { background: var(--accent) !important; color: white; font-weight: 800; }
-  #pane-vyroba .tbl-scroll { max-height: 340px; overflow-y: auto; border-radius: 0 0 8px 8px; }
+  #pane-efektivita .line-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  #pane-efektivita .line-table th { background: var(--dark); color: white; padding: 7px 8px; text-align: center; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; position: sticky; top: 0; z-index: 1; }
+  #pane-efektivita .line-table th:first-child { text-align: left; min-width: 110px; }
+  #pane-efektivita .line-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: center; }
+  #pane-efektivita .line-table td:first-child { text-align: left; font-weight: 600; color: var(--dark); }
+  #pane-efektivita .line-table tr:nth-child(even) td { background: #FAFBFC; }
+  #pane-efektivita .line-table tr:hover td { background: var(--light) !important; }
+  #pane-efektivita .line-table .total-row td { background: var(--accent) !important; color: white; font-weight: 800; }
+  #pane-efektivita .tbl-scroll { max-height: 340px; overflow-y: auto; border-radius: 0 0 8px 8px; }
   /* PERF CELLS */
-  #pane-vyroba .cell-green { color: var(--green); font-weight: 700; }
-  #pane-vyroba .cell-red { color: var(--red); font-weight: 700; }
-  #pane-vyroba .cell-amber { color: var(--amber); font-weight: 600; }
-  #pane-vyroba .cell-na { color: #CCC; }
+  #pane-efektivita .cell-green { color: var(--green); font-weight: 700; }
+  #pane-efektivita .cell-red { color: var(--red); font-weight: 700; }
+  #pane-efektivita .cell-amber { color: var(--amber); font-weight: 600; }
+  #pane-efektivita .cell-na { color: #CCC; }
   /* SUMMARY COLUMNS - Průměr / SUMA / Trend */
-  #pane-vyroba .col-summary,
-  #pane-vyroba .col-trend { background: #DCE5F0 !important; font-weight: 800 !important; }
-  #pane-vyroba .col-summary { border-left: 3px solid #1B3A5C !important; }
-  #pane-vyroba .col-trend { border-left: 1px solid #B8C5D6 !important; }
-  #pane-vyroba th.col-summary,
-  #pane-vyroba th.col-trend { background: #1B3A5C !important; color: #FFFFFF !important; border-bottom: 2px solid #0F2540 !important; }
-  #pane-vyroba th.col-summary { border-left: 3px solid #0F2540 !important; }
+  #pane-efektivita .col-summary,
+  #pane-efektivita .col-trend { background: #DCE5F0 !important; font-weight: 800 !important; }
+  #pane-efektivita .col-summary { border-left: 3px solid #1B3A5C !important; }
+  #pane-efektivita .col-trend { border-left: 1px solid #B8C5D6 !important; }
+  #pane-efektivita th.col-summary,
+  #pane-efektivita th.col-trend { background: #1B3A5C !important; color: #FFFFFF !important; border-bottom: 2px solid #0F2540 !important; }
+  #pane-efektivita th.col-summary { border-left: 3px solid #0F2540 !important; }
   /* Total-row přebije summary background */
-  #pane-vyroba .total-row td.col-summary,
-  #pane-vyroba .total-row td.col-trend { background: var(--accent) !important; border-left-color: rgba(255,255,255,0.5) !important; }
-  #pane-vyroba .total-row td.col-summary { border-left-width: 3px !important; }
+  #pane-efektivita .total-row td.col-summary,
+  #pane-efektivita .total-row td.col-trend { background: var(--accent) !important; border-left-color: rgba(255,255,255,0.5) !important; }
+  #pane-efektivita .total-row td.col-summary { border-left-width: 3px !important; }
   /* DOWNTIME CELLS */
-  #pane-vyroba .dt-prod { color: var(--prod); font-weight: 700; }
-  #pane-vyroba .dt-eng { color: var(--eng); font-weight: 700; }
-  #pane-vyroba .dt-log { color: var(--log); font-weight: 700; }
-  #pane-vyroba .dt-it { color: var(--it); font-weight: 700; }
-  #pane-vyroba .dt-tot { color: var(--dark); font-weight: 800; }
+  #pane-efektivita .dt-prod { color: var(--prod); font-weight: 700; }
+  #pane-efektivita .dt-eng { color: var(--eng); font-weight: 700; }
+  #pane-efektivita .dt-log { color: var(--log); font-weight: 700; }
+  #pane-efektivita .dt-it { color: var(--it); font-weight: 700; }
+  #pane-efektivita .dt-tot { color: var(--dark); font-weight: 800; }
   /* LEGEND DOTS */
-  #pane-vyroba .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; align-items: center; }
-  #pane-vyroba .pe-legend-item { display: flex; align-items: center; gap: 4px; }
-  #pane-vyroba .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  #pane-efektivita .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; align-items: center; }
+  #pane-efektivita .pe-legend-item { display: flex; align-items: center; gap: 4px; }
+  #pane-efektivita .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   /* SECTION TITLE */
-  #pane-vyroba .pe-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); padding: 0 0 6px; border-bottom: 2px solid var(--accent); margin-bottom: 12px; display: inline-block; }
+  #pane-efektivita .pe-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); padding: 0 0 6px; border-bottom: 2px solid var(--accent); margin-bottom: 12px; display: inline-block; }
   /* MINI SPARK */
-  #pane-vyroba .spark { display: flex; align-items: flex-end; gap: 2px; height: 24px; }
-  #pane-vyroba .spark-bar { flex: 1; border-radius: 2px 2px 0 0; min-width: 3px; transition: height .2s; }
+  #pane-efektivita .spark { display: flex; align-items: flex-end; gap: 2px; height: 24px; }
+  #pane-efektivita .spark-bar { flex: 1; border-radius: 2px 2px 0 0; min-width: 3px; transition: height .2s; }
   /* HEATMAP */
-  #pane-vyroba .heatmap-scroll { overflow-x: auto; }
-  #pane-vyroba .heatmap { border-collapse: collapse; white-space: nowrap; font-size: 10px; }
-  #pane-vyroba .heatmap th { background: var(--dark); color: white; padding: 5px 6px; font-weight: 700; text-align: center; position: sticky; top: 0; }
-  #pane-vyroba .heatmap th.line-hdr { text-align: left; min-width: 110px; position: sticky; left: 0; z-index: 2; }
-  #pane-vyroba .heatmap td { padding: 4px 6px; text-align: center; border: 1px solid rgba(255,255,255,.3); font-weight: 600; min-width: 52px; }
-  #pane-vyroba .heatmap td.line-col { text-align: left; font-weight: 700; color: var(--dark); background: #F0F4F8; position: sticky; left: 0; border-right: 2px solid var(--dark); }
+  #pane-efektivita .heatmap-scroll { overflow-x: auto; }
+  #pane-efektivita .heatmap { border-collapse: collapse; white-space: nowrap; font-size: 10px; }
+  #pane-efektivita .heatmap th { background: var(--dark); color: white; padding: 5px 6px; font-weight: 700; text-align: center; position: sticky; top: 0; }
+  #pane-efektivita .heatmap th.line-hdr { text-align: left; min-width: 110px; position: sticky; left: 0; z-index: 2; }
+  #pane-efektivita .heatmap td { padding: 4px 6px; text-align: center; border: 1px solid rgba(255,255,255,.3); font-weight: 600; min-width: 52px; }
+  #pane-efektivita .heatmap td.line-col { text-align: left; font-weight: 700; color: var(--dark); background: #F0F4F8; position: sticky; left: 0; border-right: 2px solid var(--dark); }
   /* VIEW SECTION */
-  #pane-vyroba .view-section { display: none; }
-  #pane-vyroba .view-section.active { display: block; }
+  #pane-efektivita .view-section { display: none; }
+  #pane-efektivita .view-section.active { display: block; }
   /* MINI BADGE */
-  #pane-vyroba .mini-badge { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 700; }
-  #pane-vyroba .kpi-mini-list { margin-top: 8px; display: flex; flex-direction: column; gap: 3px; border-top: 1px solid rgba(0,0,0,.08); padding-top: 7px; }
-  #pane-vyroba .kpi-mini-row { display: flex; align-items: center; justify-content: space-between; font-size: 10px; gap: 6px; }
-  #pane-vyroba .kpi-mini-rank { width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: white; flex-shrink: 0; }
-  #pane-vyroba .kpi-mini-rank.r1 { background: #F39C12; }
-  #pane-vyroba .kpi-mini-rank.r2 { background: #95A5A6; }
-  #pane-vyroba .kpi-mini-rank.r3 { background: #CD7F32; }
-  #pane-vyroba .kpi-mini-name { flex: 1; color: var(--darkgray); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #pane-vyroba .kpi-mini-val { font-weight: 800; flex-shrink: 0; }
-  #pane-vyroba .mini-badge.green { background: #D5F5E3; color: #1E8449; }
-  #pane-vyroba .mini-badge.red { background: #FADBD8; color: #922B21; }
-  #pane-vyroba .mini-badge.amber { background: #FDEBD0; color: #9C640C; }
+  #pane-efektivita .mini-badge { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+  #pane-efektivita .kpi-mini-list { margin-top: 8px; display: flex; flex-direction: column; gap: 3px; border-top: 1px solid rgba(0,0,0,.08); padding-top: 7px; }
+  #pane-efektivita .kpi-mini-row { display: flex; align-items: center; justify-content: space-between; font-size: 10px; gap: 6px; }
+  #pane-efektivita .kpi-mini-rank { width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: white; flex-shrink: 0; }
+  #pane-efektivita .kpi-mini-rank.r1 { background: #F39C12; }
+  #pane-efektivita .kpi-mini-rank.r2 { background: #95A5A6; }
+  #pane-efektivita .kpi-mini-rank.r3 { background: #CD7F32; }
+  #pane-efektivita .kpi-mini-name { flex: 1; color: var(--darkgray); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #pane-efektivita .kpi-mini-val { font-weight: 800; flex-shrink: 0; }
+  #pane-efektivita .mini-badge.green { background: #D5F5E3; color: #1E8449; }
+  #pane-efektivita .mini-badge.red { background: #FADBD8; color: #922B21; }
+  #pane-efektivita .mini-badge.amber { background: #FDEBD0; color: #9C640C; }
   /* RESPONSIVE */
   @media(max-width: 900px) {
-    #pane-vyroba .kpi-row { grid-template-columns: repeat(2, 1fr); }
-    #pane-vyroba .two-col,
-    #pane-vyroba .three-col { grid-template-columns: 1fr; }
-    #pane-vyroba .top3-grid { grid-template-columns: 1fr; }
+    #pane-efektivita .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    #pane-efektivita .two-col,
+    #pane-efektivita .three-col { grid-template-columns: 1fr; }
+    #pane-efektivita .top3-grid { grid-template-columns: 1fr; }
   }
   /* Trend range slider — dva sliders přes sebe */
-  #pane-vyroba #trendFromSlider,
-  #pane-vyroba #trendToSlider { pointer-events: none; -webkit-appearance: none; appearance: none; background: transparent; }
-  #pane-vyroba #trendFromSlider::-webkit-slider-thumb,
-  #pane-vyroba #trendToSlider::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #1B3A5C; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; margin-top: -7px; }
-  #pane-vyroba #trendFromSlider::-moz-range-thumb,
-  #pane-vyroba #trendToSlider::-moz-range-thumb { pointer-events: auto; width: 18px; height: 18px; border-radius: 50%; background: #1B3A5C; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; }
-  #pane-vyroba #trendFromSlider::-webkit-slider-runnable-track,
-  #pane-vyroba #trendToSlider::-webkit-slider-runnable-track { background: transparent; height: 4px; }
-  #pane-vyroba #trendFromSlider::-moz-range-track,
-  #pane-vyroba #trendToSlider::-moz-range-track { background: transparent; height: 4px; }
-  #pane-vyroba .trend-preset-btn:hover { opacity: 0.85; }
-  #pane-vyroba .trend-preset-btn.active { background: #1B3A5C !important; color: white !important; }
+  #pane-efektivita #trendFromSlider,
+  #pane-efektivita #trendToSlider { pointer-events: none; -webkit-appearance: none; appearance: none; background: transparent; }
+  #pane-efektivita #trendFromSlider::-webkit-slider-thumb,
+  #pane-efektivita #trendToSlider::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #1B3A5C; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; margin-top: -7px; }
+  #pane-efektivita #trendFromSlider::-moz-range-thumb,
+  #pane-efektivita #trendToSlider::-moz-range-thumb { pointer-events: auto; width: 18px; height: 18px; border-radius: 50%; background: #1B3A5C; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; }
+  #pane-efektivita #trendFromSlider::-webkit-slider-runnable-track,
+  #pane-efektivita #trendToSlider::-webkit-slider-runnable-track { background: transparent; height: 4px; }
+  #pane-efektivita #trendFromSlider::-moz-range-track,
+  #pane-efektivita #trendToSlider::-moz-range-track { background: transparent; height: 4px; }
+  #pane-efektivita .trend-preset-btn:hover { opacity: 0.85; }
+  #pane-efektivita .trend-preset-btn.active { background: #1B3A5C !important; color: white !important; }
   @keyframes pe-modalIn {
     from { opacity: 0; transform: translateY(-20px) scale(0.96); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
   @keyframes pe-spin { from {transform:rotate(0deg);} to {transform:rotate(360deg);} }
-  #pane-vyroba .ctl-pair { display: flex; gap: 6px; align-items: center; }
+  #pane-efektivita .ctl-pair { display: flex; gap: 6px; align-items: center; }
 
 </style>
 </head>
@@ -2645,7 +2645,6 @@ body.mobile-mode .date-input { width: 100%; }
 
   <nav class="tabs">
     <button class="tab active" data-tab="dashboard"><svg><use href="#i-dashboard"/></svg><span class="tab-label">Dashboard</span></button>
-    <button class="tab" data-tab="vyroba"><svg><use href="#i-bolt"/></svg><span class="tab-label">Výroba</span></button>
     <button class="tab" data-tab="daily"><svg><use href="#i-megaphone"/></svg><span class="tab-label">Denní porada</span></button>
     <button class="tab" data-tab="audits"><svg><use href="#i-list"/></svg><span class="tab-label">Audity</span></button>
     <button class="tab" data-tab="entry"><svg><use href="#i-plus"/></svg><span class="tab-label">Nový audit</span></button>
@@ -2654,6 +2653,7 @@ body.mobile-mode .date-input { width: 100%; }
     <button class="tab" data-tab="actions"><svg><use href="#i-target"/></svg><span class="tab-label">Opatření</span></button>
     <button class="tab" data-tab="actionplan"><svg><use href="#i-clipboard-check"/></svg><span class="tab-label">Akční plán</span></button>
     <button class="tab" data-tab="talent"><svg><use href="#i-users-plus"/></svg><span class="tab-label">Rozvoj lidí</span></button>
+    <button class="tab" data-tab="efektivita"><svg><use href="#i-monitor"/></svg><span class="tab-label">Efektivita</span></button>
     <button class="tab" data-tab="vykon"><svg><use href="#i-bolt"/></svg><span class="tab-label">Výkon</span></button>
     <button class="tab" data-tab="analyza"><svg><use href="#i-trend"/></svg><span class="tab-label">Analýza</span></button>
     <button class="tab" data-tab="legenda"><svg><use href="#i-book"/></svg><span class="tab-label">Legenda</span></button>
@@ -4171,12 +4171,12 @@ body.mobile-mode .date-input { width: 100%; }
     </div>
 
     <!-- ============================================================
-         VÝROBA & ENGINEERING — výkon linek, prostoje, heatmapa, scrap
+         EFEKTIVITA VÝROBY — výkon linek, prostoje, heatmapa, scrap
          ============================================================ -->
-    <div class="tab-pane" id="pane-vyroba">
+    <div class="tab-pane" id="pane-efektivita">
 <div class="pe-header">
   <div>
-    <div class="h1" style="font-size:15px;font-weight:800;">🏭 Výroba &amp; Engineering</div>
+    <div class="h1" style="font-size:15px;font-weight:800;">🏭 Efektivita výroby</div>
     <div class="subtitle">Výkon linek · Prostoje · Trend analýza · TOP 3 · Automotive závod · <span style="opacity:0.6;font-size:0.85em">build 2026-09-07 04:13</span></div>
   </div>
   <div class="pe-header-right">
@@ -4475,7 +4475,7 @@ body.mobile-mode .date-input { width: 100%; }
 <script>
 
 // =====================================================================
-// VÝROBA & ENGINEERING — KPI (linky, prostoje, heatmapa, scrap)
+// EFEKTIVITA VÝROBY — KPI (linky, prostoje, heatmapa, scrap)
 // Integrovaný modul: celý kód běží v IIFE, ven vede jen globální `PE`.
 // =====================================================================
 (function () {
@@ -4484,8 +4484,8 @@ body.mobile-mode .date-input { width: 100%; }
 // Všechny DOM dotazy modulu jsou omezené na vlastní záložku, aby
 // nesahaly na taby a tabulky zbytku dashboardu.
 const PEROOT = {
-  querySelector:    (s) => document.querySelector('#pane-vyroba ' + s),
-  querySelectorAll: (s) => document.querySelectorAll('#pane-vyroba ' + s),
+  querySelector:    (s) => document.querySelector('#pane-efektivita ' + s),
+  querySelectorAll: (s) => document.querySelectorAll('#pane-efektivita ' + s),
 };
 
 // Datalabels se přidává jen ke grafům tohoto modulu — globální
@@ -10463,7 +10463,7 @@ document.querySelectorAll('.tab').forEach(t => {
     document.querySelectorAll('.tab-pane').forEach(x => x.classList.remove('active'));
     t.classList.add('active');
     document.getElementById('pane-' + t.dataset.tab).classList.add('active');
-    if (t.dataset.tab === 'vyroba') PE.activate();
+    if (t.dataset.tab === 'efektivita') PE.activate();
     if (t.dataset.tab === 'entry') renderEntryForm();
     if (t.dataset.tab === 'vykon') {
       document.getElementById('vykon-year').value = state.ui.vykonYear || state.settings.currentYear;
