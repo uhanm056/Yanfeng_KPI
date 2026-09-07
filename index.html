@@ -7567,6 +7567,39 @@ function pseudoEnc(name) {
   PSEUDO.enc[name] = code; PSEUDO.dec[code] = name;
   return code;
 }
+// v124: VRATNÉ kódování jmen — jen pro číselník sledovaných osob.
+// pseudoHash() je jednosměrný djb2. U koordinátorů, TL a trenérů to nevadí:
+// jejich seznamy jsou zapečené v tomto souboru, takže si každý prohlížeč
+// dokáže mapu kód→jméno dohashovat. Osoba, kterou ale někdo napíše ručně,
+// v žádném takovém seznamu není — z hashe ji nikdo jiný nepřečte a jméno
+// zůstalo jen v prohlížeči autora (karty pak ukazovaly holý kód).
+// Tohle není šifra, jen zábrana proti čitelnému jménu na první pohled —
+// stejná úroveň ochrany, jakou fakticky mají jména ze zapečených seznamů.
+const NAME_TOKEN = 'N~';
+function nameEncode(name) {
+  if (!name || typeof name !== 'string') return name;
+  try {
+    let bin = '';
+    new TextEncoder().encode(name).forEach(b => { bin += String.fromCharCode(b); });
+    return NAME_TOKEN + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  } catch (e) { return name; }
+}
+function nameDecode(tok) {
+  if (typeof tok !== 'string' || !tok.startsWith(NAME_TOKEN)) return tok;
+  try {
+    const b64 = tok.slice(NAME_TOKEN.length).replace(/-/g, '+').replace(/_/g, '/');
+    const bin = atob(b64 + '==='.slice((b64.length + 3) % 4));
+    return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
+  } catch (e) { return tok; }
+}
+// Pole kódovaná vratně místo jednosměrného hashe.
+// Stačí číselník osob: jakmile se z něj jméno obnoví, registerTalentOPs()
+// doplní hash→jméno do map a dohledá se i personName na kartách.
+const PSEUDO_REVERSIBLE = { talentop: ['name'] };
+function isReversible(type, field) {
+  return (PSEUDO_REVERSIBLE[type] || []).includes(field);
+}
+
 function pseudoDec(code) {
   if (!code) return code;
   return PSEUDO.dec[code] || code;
@@ -7581,6 +7614,11 @@ function repairTalentNames() {
   const looksLikeCode = v => typeof v === 'string' && /^P[0-9A-Z]{5,8}$/.test(v);
   // 1) číselník osob
   (state.talentop || []).forEach(op => {
+    // v124: token z cloudu rozbalit zpátky na jméno
+    if (typeof op.name === 'string' && op.name.startsWith(NAME_TOKEN)) {
+      const plain = nameDecode(op.name);
+      if (plain !== op.name) { op.name = plain; fixed++; }
+    }
     if (looksLikeCode(op.name) && PSEUDO.dec[op.name]) { op.name = PSEUDO.dec[op.name]; fixed++; }
   });
   registerTalentOPs();
@@ -7592,6 +7630,31 @@ function repairTalentNames() {
   });
   if (fixed) { save(); console.log('[v85] Opraveno ' + fixed + ' zakódovaných jmen'); }
   return fixed;
+}
+// v124: jednorázově přeposlat číselník osob novým vratným kódováním.
+// Jména ručně zadaných lidí se dřív hashovala jednosměrně, takže mimo
+// prohlížeč autora už je nikdo nepřečetl. Tady se u autora, který je
+// v localStorage pořád má čitelné, znovu odešlou — ostatním koordinátorům
+// se tím karty doplní jménem místo kódu. Běží nejvýš jednou.
+const TALENTOP_RESCUE_KEY = 'yf_talentop_rescue_v124';
+function rescueTalentOpNames() {
+  try {
+    if (localStorage.getItem(TALENTOP_RESCUE_KEY)) return 0;
+    localStorage.setItem(TALENTOP_RESCUE_KEY, new Date().toISOString());
+    const ops = state.talentop || [];
+    const looksLikeCode = v => typeof v === 'string' && /^P[0-9A-Z]{5,8}$/.test(v);
+    const plain = ops.filter(o => o.name && !looksLikeCode(o.name) && !String(o.name).startsWith(NAME_TOKEN));
+    if (!plain.length) return 0;
+    // posunout razítko, ať merge u ostatních klientů záznam přijme jako novější
+    const now = new Date().toISOString();
+    plain.forEach(o => { o.updated = now; });
+    save();
+    console.log('[v124] Číselník osob přeposlán vratně zakódovaný: ' + plain.length + ' jmen');
+    return plain.length;
+  } catch (e) {
+    console.warn('[v124] Záchrana jmen neproběhla:', e);
+    return 0;
+  }
 }
 // Pole se jmény per typ entity (free-text pole se nešifrují — viz návod: nepsat jména do popisů)
 const PSEUDO_FIELDS = {
@@ -7608,14 +7671,21 @@ const PSEUDO_FIELDS = {
 function pseudoEncodeObj(type, obj) {
   const out = { ...obj };
   (PSEUDO_FIELDS[type] || []).forEach(f => {
-    if (out[f]) out[f] = pseudoEnc(out[f]);  // v82: dynamické (i sledovaní OP)
+    if (!out[f]) return;
+    out[f] = isReversible(type, f) ? nameEncode(out[f])   // v124: vratně
+                                   : pseudoEnc(out[f]);   // v82: dynamické (i sledovaní OP)
   });
   return out;
 }
 function pseudoDecodeObj(type, obj) {
   const out = { ...obj };
   (PSEUDO_FIELDS[type] || []).forEach(f => {
-    if (out[f]) out[f] = pseudoDec(out[f]);  // v82: dynamické
+    if (!out[f]) return;
+    // v124: vratná pole umí i starý jednosměrný tvar — data zapsaná před
+    // touto verzí se pořád načtou (u lidí ze zapečených seznamů i přeloží).
+    out[f] = isReversible(type, f)
+      ? (String(out[f]).startsWith(NAME_TOKEN) ? nameDecode(out[f]) : pseudoDec(out[f]))
+      : pseudoDec(out[f]);  // v82: dynamické
   });
   return out;
 }
@@ -15311,6 +15381,7 @@ function init() {
   initDailyFilters();  // v80
   registerTalentOPs();  // v82: zaregistrovat kódy sledovaných OP
   repairTalentNames();  // v85: opravit případné kódy místo jmen
+  rescueTalentOpNames();  // v124: přeposlat jména ručně zadaných osob ostatním
   initTalentFilters();  // v82
   setSyncStatus('local', 'Data uložena lokálně (localStorage)');
   setupMobileToggle();  // v51: mobile mode toggle + auto-detect
