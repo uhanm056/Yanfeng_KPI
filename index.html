@@ -4527,6 +4527,11 @@ const dtHeatColor = v => {
 const dtFontColor = v => (v != null && v >= 1200) ? 'white' : '#2C3E50';
 
 let charts = {};
+// v125: v původním samostatném souboru se do currentCw přiřazovalo bez
+// deklarace (implicitní globál). Modul běží v 'use strict', kde je takové
+// přiřazení ReferenceError — import pak spadl uprostřed finishImport()
+// a nestihl uložit data do localStorage.
+let currentCw = null;
 function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
 
 function getWeeksValue() {
@@ -4618,7 +4623,10 @@ function init() {
     sel.appendChild(opt);
   });
   // Pokus se obnovit data z localStorage (po importu z minula)
-var _restoredFrom = null;  // VYPNUTO: data zapečena v souboru
+// v125: znovu zapnuto — bez obnovení se naimportovaná data po reloadu
+// zahodila a dashboard se vrátil k datům zapečeným v souboru.
+// Tlačítko Reset v hlavičce zapečený stav vrátí.
+var _restoredFrom = tryRestoreFromLocalStorage();
 if (_restoredFrom) {
   console.log('[Dashboard] Aplikuji obnovená data — překresluji UI');
   // Aktualizuj coordinator linky podle nového RAW.lines
