@@ -6918,7 +6918,7 @@ function apUrgInfo(key) { return AP_URGENCY.find(u => u.key === key) || AP_URGEN
 function apCatInfo(key) { return AP_CATEGORIES.find(c => c.key === key) || null; }
 function apIsOverdue(a) {
   if (!a.termin || a.status === 'done') return false;
-  return a.termin < new Date().toISOString().slice(0, 10);
+  return a.termin < todayStrLocal();
 }
 // v26: Operations Manager - has scope over all TLs and linky.
 // Treated SEPARATELY from coordinators - his audits don't affect Plant Blended / RAG cards
@@ -7091,11 +7091,24 @@ function purgePreview(cutoff) {
 }
 
 // Datum auditu — audity mají `date`, u starších záznamů se odvodí z týdne a roku.
+// v126: Datum dne (YYYY-MM-DD) z LOKÁLNÍCH složek.
+// toISOString() převádí na UTC, takže u Date postavené na lokální půlnoc
+// vrátí v zónách před UTC (i v ČR) o den dřívější datum. V kalendáři to
+// posouvalo audity o den dopředu — pátek se kreslil do soboty.
+// Pozor: na Date postavené přes Date.UTC(...) se tenhle helper nesmí
+// použít, tam je toISOString() správně (viz dateFromWeek).
+function toDateStr(d) {
+  return d.getFullYear() + '-' +
+         String(d.getMonth() + 1).padStart(2, '0') + '-' +
+         String(d.getDate()).padStart(2, '0');
+}
+function todayStrLocal() { return toDateStr(new Date()); }
+
 function auditDateOf(a) {
   if (a.date) return a.date;
   if (a.week && a.year) {
     const d = new Date(a.year, 0, 1 + (a.week - 1) * 7);
-    return d.toISOString().slice(0, 10);
+    return toDateStr(d);
   }
   return null;
 }
@@ -7248,15 +7261,15 @@ function defaultState() {
     settings: { currentUser: COORDINATORS[0], currentWeek: 18, currentYear: 2026, theme: 'light', mobileMode: null },
     ui: { filterRange: 4, filterCoord: 'all', entryMode: 'quick', vykonCoordFilter: 'all', vykonYear: 2026,
           rosterTab: 'tls',  // v98: aktivní kategorie v Nastavení → Seznam osob
-          kalendarView: 'month', kalendarDate: new Date().toISOString().slice(0, 10), kalendarCoord: 'mine',
+          kalendarView: 'month', kalendarDate: todayStrLocal(), kalendarCoord: 'mine',
           findingCatFilter: 'all', findingCoordFilter: 'all',
           actionStatusFilter: 'open_active', actionCatFilter: 'all', actionCoordFilter: 'all',
           // v53: nový filter mode (weeks | month | range)
           filterMode: 'weeks',
           filterMonth: { year: 2026, month: new Date().getMonth() + 1 },
           filterDateRange: {
-            from: new Date(Date.now() - 30*24*60*60*1000).toISOString().slice(0,10),
-            to:   new Date().toISOString().slice(0,10)
+            from: toDateStr(new Date(Date.now() - 30*24*60*60*1000)),
+            to:   todayStrLocal()
           } }
   };
 }
@@ -9843,7 +9856,7 @@ function renderEntryForm() {
   coordSel.innerHTML = COORDINATORS.map(c => `<option value="${c}">${c}</option>`).join('') +
     `<optgroup label="Operations Manager">${OPERATIONS_MANAGERS.map(c => `<option value="${c}">${c}</option>`).join('')}</optgroup>`;
   coordSel.value = state.settings.currentUser;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayStrLocal();
   document.getElementById('entry-date').value = today;
   document.getElementById('entry-week').value = isoWeekFromDate(today);
   document.getElementById('entry-year').value = new Date(today).getFullYear();
@@ -10678,8 +10691,8 @@ document.querySelectorAll('[data-quick]').forEach(b => {
     const to = new Date();
     const from = new Date(Date.now() - days * 86400000);
     state.ui.filterDateRange = {
-      from: from.toISOString().slice(0,10),
-      to:   to.toISOString().slice(0,10)
+      from: toDateStr(from),
+      to:   toDateStr(to)
     };
     renderRangeInputs();
     save();
@@ -10996,7 +11009,7 @@ document.getElementById('hc-save')?.addEventListener('click', () => {
     // v102: active se neukládá z formuláře — počítá se ze Seznamu osob při renderu
     tl: { active: TLS.length,      move: mvTL, end: num('hc-tl-end'), plan: num('hc-tl-plan'), moveNames: keepTL },
     tr: { active: TRAINERS.length, move: mvTR, end: num('hc-tr-end'), plan: num('hc-tr-plan'), moveNames: keepTR },
-    updated: new Date().toISOString().slice(0,10)
+    updated: todayStrLocal()
   };
   save();
   renderHeadcountPanel();
@@ -11073,7 +11086,7 @@ document.getElementById('btn-export-csv-audits').addEventListener('click', () =>
       (a.created || '').replace('T', ' ').slice(0, 19)
     ]);
   });
-  const dateStr = new Date().toISOString().slice(0, 10);
+  const dateStr = todayStrLocal();
   downloadCSV(`yanfeng_audity_${dateStr}.csv`, rows);
   toast(`✓ Exportováno ${sorted.length} auditů`, 'success');
 });
@@ -11103,7 +11116,7 @@ document.getElementById('btn-export-csv-vykon').addEventListener('click', () => 
   records.forEach(r => {
     rows.push([r.linka, r.week, r.year, r.pct, vykonPointsFor(r.pct)]);
   });
-  const dateStr = new Date().toISOString().slice(0, 10);
+  const dateStr = todayStrLocal();
   downloadCSV(`yanfeng_vykon_${dateStr}.csv`, rows);
   toast(`✓ Exportováno ${records.length} záznamů výkonu`, 'success');
 });
@@ -11113,7 +11126,7 @@ document.getElementById('btn-export').addEventListener('click', () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `yanfeng-kpi-${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `yanfeng-kpi-${todayStrLocal()}.json`;
   a.click();
   URL.revokeObjectURL(url);
   toast('Data exportována', 'success');
@@ -11285,7 +11298,7 @@ function findSheet(wb, candidateNames) {
 }
 
 function excelDateToISO(val) {
-  if (!val) return new Date().toISOString().slice(0, 10);
+  if (!val) return todayStrLocal();
   // Date object from SheetJS - use LOCAL components, not UTC ones
   // (SheetJS with cellDates:true returns local-time Date; toISOString shifts by TZ offset)
   if (val instanceof Date) {
@@ -11315,7 +11328,7 @@ function excelDateToISO(val) {
       return `${y}-${m}-${d}`;
     }
   }
-  return new Date().toISOString().slice(0, 10);
+  return todayStrLocal();
 }
 
 async function processAuditWorkbook(wb) {
@@ -12166,12 +12179,12 @@ function renderKalendar() {
 }
 
 function renderKalendarMonth() {
-  const baseDate = new Date((state.ui.kalendarDate || new Date().toISOString().slice(0, 10)) + 'T00:00:00');
+  const baseDate = new Date((state.ui.kalendarDate || todayStrLocal()) + 'T00:00:00');
   const year = baseDate.getFullYear();
   const month = baseDate.getMonth() + 1; // 1-12
   document.getElementById('kal-title').textContent = fmtMonthCs(year, month);
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = todayStrLocal();
   const coord = getKalendarCoordFilter();
   const plans = filterPlanByCoord(state.plan, coord);
 
@@ -12197,7 +12210,7 @@ function renderKalendarMonth() {
   weekdayNames.forEach(w => { html += `<div class="kal-weekday">${w}</div>`; });
   // Day cells
   cells.forEach(d => {
-    const dateStr = d.toISOString().slice(0, 10);
+    const dateStr = toDateStr(d);
     const isOtherMonth = d.getMonth() + 1 !== month;
     const isToday = dateStr === todayStr;
     const dayOfWeek = (d.getDay() + 6) % 7;
@@ -12264,14 +12277,14 @@ function renderKalendarMonth() {
 }
 
 function renderKalendarWeek() {
-  const baseDate = new Date((state.ui.kalendarDate || new Date().toISOString().slice(0, 10)) + 'T00:00:00');
+  const baseDate = new Date((state.ui.kalendarDate || todayStrLocal()) + 'T00:00:00');
   const year = baseDate.getFullYear();
   const week = isoWeekFromDateObj(baseDate);
   const mondayStr = dateForDayInWeek(year, week, 0);
   const sundayStr = dateForDayInWeek(year, week, 6);
   document.getElementById('kal-title').textContent = `CW${week} · ${mondayStr.slice(8,10)}.${mondayStr.slice(5,7)}. – ${sundayStr.slice(8,10)}.${sundayStr.slice(5,7)}.${year}`;
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = todayStrLocal();
   const coord = getKalendarCoordFilter();
   const plans = filterPlanByCoord(state.plan, coord);
 
@@ -12379,7 +12392,7 @@ function openPlanModal(prefill = {}) {
       <div class="modal-body">
         <div class="field">
           <label>Datum *</label>
-          <input type="date" class="input" id="plan-date" value="${prefill.date || new Date().toISOString().slice(0,10)}">
+          <input type="date" class="input" id="plan-date" value="${prefill.date || todayStrLocal()}">
         </div>
         <div class="field">
           <label>Auditor *</label>
@@ -12480,7 +12493,7 @@ function renderDashboardKalendarWidget() {
   const container = document.getElementById('dashboard-kalendar-widget');
   if (!container) return;
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = todayStrLocal();
   const today = new Date(todayStr + 'T00:00:00');
   const currentWeek = isoWeekFromDateObj(today);
   const currentYear = today.getFullYear();
@@ -12555,29 +12568,29 @@ document.querySelectorAll('.view-btn').forEach(b => {
   });
 });
 document.getElementById('kal-prev').addEventListener('click', () => {
-  const d = new Date((state.ui.kalendarDate || new Date().toISOString().slice(0,10)) + 'T00:00:00');
+  const d = new Date((state.ui.kalendarDate || todayStrLocal()) + 'T00:00:00');
   if ((state.ui.kalendarView || 'month') === 'month') {
     d.setMonth(d.getMonth() - 1);
   } else {
     d.setDate(d.getDate() - 7);
   }
-  state.ui.kalendarDate = d.toISOString().slice(0, 10);
+  state.ui.kalendarDate = toDateStr(d);
   save();
   renderKalendar();
 });
 document.getElementById('kal-next').addEventListener('click', () => {
-  const d = new Date((state.ui.kalendarDate || new Date().toISOString().slice(0,10)) + 'T00:00:00');
+  const d = new Date((state.ui.kalendarDate || todayStrLocal()) + 'T00:00:00');
   if ((state.ui.kalendarView || 'month') === 'month') {
     d.setMonth(d.getMonth() + 1);
   } else {
     d.setDate(d.getDate() + 7);
   }
-  state.ui.kalendarDate = d.toISOString().slice(0, 10);
+  state.ui.kalendarDate = toDateStr(d);
   save();
   renderKalendar();
 });
 document.getElementById('kal-today').addEventListener('click', () => {
-  state.ui.kalendarDate = new Date().toISOString().slice(0, 10);
+  state.ui.kalendarDate = todayStrLocal();
   save();
   renderKalendar();
 });
@@ -12594,7 +12607,7 @@ document.getElementById('kal-add-plan').addEventListener('click', () => openPlan
 function generateManagementReport() {
   const wb = XLSX.utils.book_new();
   const today = new Date();
-  const todayStr = today.toISOString().slice(0, 10);
+  const todayStr = toDateStr(today);
   const cw = isoWeekFromDateObj(today);
   const year = today.getFullYear();
 
@@ -12752,7 +12765,7 @@ function getCurrentWeekCoverage() {
   const monStr = dateForDayInWeek(year, cw, 0);
   const sunStr = dateForDayInWeek(year, cw, 6);
   const weekPlans = state.plan.filter(p => p.date >= monStr && p.date <= sunStr);
-  const todayStr = today.toISOString().slice(0, 10);
+  const todayStr = toDateStr(today);
   const done = weekPlans.filter(p => planStatus(p, todayStr) === 'done').length;
   return weekPlans.length > 0 ? `${done} / ${weekPlans.length}` : '—';
 }
@@ -13115,7 +13128,7 @@ function renderExecutiveSummary() {
 
   // Current week coverage
   const today = new Date();
-  const todayStr = today.toISOString().slice(0, 10);
+  const todayStr = toDateStr(today);
   const currentCW = isoWeekFromDateObj(today);
   const currentYear = today.getFullYear();
   const monStr = dateForDayInWeek(currentYear, currentCW, 0);
@@ -13393,7 +13406,7 @@ function openFindingModal(existing = null, prefill = {}) {
       <div class="modal-body">
         <div class="audit-field-grid">
           <div class="field"><label>Datum *</label>
-            <input type="date" class="input" id="fm-date" value="${f.date || prefill.date || new Date().toISOString().slice(0,10)}"></div>
+            <input type="date" class="input" id="fm-date" value="${f.date || prefill.date || todayStrLocal()}"></div>
           <div class="field"><label>Směna</label>
             <select class="select" id="fm-shift">
               ${SHIFTS.map(s => `<option value="${s.key}" ${f.shift===s.key?'selected':''}>${s.key} - ${s.label}</option>`).join('')}
@@ -13670,7 +13683,7 @@ document.getElementById('finding-export-csv').addEventListener('click', () => {
       (FINDING_KIND[findingKind(f)]||{}).label || '',
       f.actionTracker||'', (VARSL_STATES[varslState(f)]||{}).short || '']);
   });
-  downloadCSV(`yanfeng_nalezy_${new Date().toISOString().slice(0,10)}.csv`, rows);
+  downloadCSV(`yanfeng_nalezy_${todayStrLocal()}.csv`, rows);
   toast(`Exportováno ${state.findings.length} nálezů`, 'success');
 });
 
@@ -13792,7 +13805,7 @@ function nextActionRef() {
 
 function isActionOverdue(a) {
   if (!a.deadline || a.status === 'done' || a.status === 'verified') return false;
-  return new Date(a.deadline) < new Date(new Date().toISOString().slice(0,10));
+  return new Date(a.deadline) < new Date(todayStrLocal());
 }
 
 function actionMatchesStatusFilter(a, filter) {
@@ -13833,7 +13846,7 @@ const ACTION_TEMPLATES = {
 function deadlineInDays(days) {
   const d = new Date();
   d.setDate(d.getDate() + (days || 7));
-  return d.toISOString().slice(0, 10);
+  return toDateStr(d);
 }
 
 // Sestaví prefill pro nové opatření. Volá se z nálezu i z NOK v auditu.
@@ -14163,7 +14176,7 @@ document.getElementById('action-export-csv-btn')?.addEventListener('click', () =
   const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n');
   const blob = new Blob(['\ufeff' + csv], {type: 'text/csv;charset=utf-8;'});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = `Opatreni_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  const a = document.createElement('a'); a.href = url; a.download = `Opatreni_${todayStrLocal()}.csv`; a.click();
   URL.revokeObjectURL(url);
   toast(`Exportováno ${state.actions.length} opatření`, 'success');
 });
@@ -14175,7 +14188,7 @@ function apGenId() { return 'ap' + Date.now().toString(36) + Math.random().toStr
 
 function openActionPlanModal(existing = null, prefill = {}) {
   const a = existing || {
-    id: apGenId(), date: new Date().toISOString().slice(0, 10),
+    id: apGenId(), date: todayStrLocal(),
     coordinator: state.settings.currentUser || '', linka: '', urgency: 'M',
     category: '', source: '', description: '', rootCause: '', containment: '',
     capa: '', responsible: '', termin: '', status: 'open', note: '',
@@ -14439,7 +14452,7 @@ document.getElementById('ap-export-csv-btn')?.addEventListener('click', () => {
   const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n');
   const blob = new Blob(['\ufeff' + csv], {type: 'text/csv;charset=utf-8;'});
   const url = URL.createObjectURL(blob);
-  const el = document.createElement('a'); el.href = url; el.download = `Akcni_plan_${new Date().toISOString().slice(0,10)}.csv`; el.click();
+  const el = document.createElement('a'); el.href = url; el.download = `Akcni_plan_${todayStrLocal()}.csv`; el.click();
   URL.revokeObjectURL(url);
   toast(`Exportováno ${(state.actionplan||[]).length} akcí`, 'success');
 });
@@ -14499,7 +14512,7 @@ function denikCatInfo(k){ return DENIK_CATS.find(c=>c.key===k)||null; }
 function dailyStateInfo(k){ return DAILY_STATES.find(s=>s.key===k)||DAILY_STATES[0]; }
 
 function getDailyDate() {
-  return state.ui.dailyDate || new Date().toISOString().slice(0,10);
+  return state.ui.dailyDate || todayStrLocal();
 }
 
 // Najít/vytvořit semafor záznam pro koordinátora + den
@@ -14792,7 +14805,7 @@ document.getElementById('daily-date')?.addEventListener('change', e => {
   state.ui.dailyDate = e.target.value; save(); renderDaily();
 });
 document.getElementById('daily-today-btn')?.addEventListener('click', () => {
-  state.ui.dailyDate = new Date().toISOString().slice(0,10); save(); renderDaily();
+  state.ui.dailyDate = todayStrLocal(); save(); renderDaily();
 });
 document.getElementById('denik-new-btn')?.addEventListener('click', () => openDenikModal());
 document.getElementById('denik-coord-filter')?.addEventListener('change', e => {
@@ -14812,7 +14825,7 @@ document.getElementById('denik-export-btn')?.addEventListener('click', () => {
   const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n');
   const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8;'});
   const url = URL.createObjectURL(blob);
-  const el = document.createElement('a'); el.href=url; el.download=`Operativni_denik_${new Date().toISOString().slice(0,10)}.csv`; el.click();
+  const el = document.createElement('a'); el.href=url; el.download=`Operativni_denik_${todayStrLocal()}.csv`; el.click();
   URL.revokeObjectURL(url);
   toast(`Exportováno ${(state.denik||[]).length} zápisů`, 'success');
 });
@@ -15239,7 +15252,7 @@ document.getElementById('talent-export-btn')?.addEventListener('click', () => {
   const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n');
   const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8;'});
   const url = URL.createObjectURL(blob);
-  const el = document.createElement('a'); el.href=url; el.download=`Rozvoj_lidi_${new Date().toISOString().slice(0,10)}.csv`; el.click();
+  const el = document.createElement('a'); el.href=url; el.download=`Rozvoj_lidi_${todayStrLocal()}.csv`; el.click();
   URL.revokeObjectURL(url);
   toast(`Exportováno ${(state.talent||[]).length} talentů`, 'success');
 });
