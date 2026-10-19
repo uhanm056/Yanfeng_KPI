@@ -6955,7 +6955,6 @@ const SEED_TLS = [
   { name: 'Veronika Šmídová', coord: 'Nikola Hanusová', linky: ['29_X540 IP'] },
   { name: 'Zoran Stefanović', coord: 'Martina Mlejnková', linky: ['04_W177 IP','05_W247 IP'] },
   { name: 'Jan Kůs', coord: 'Bohuš Móri', linky: ['15_IMM 001','16_IMM 002','17_IMM 003','18_IMM 005','19_IMM 006','20_IMM 007','21_IMM 008','22_IMM 009','23_IMM 010','24_IMM 011','25_IMM 012'] },
-  { name: 'Jakub Růžička', coord: 'Bohuš Móri', linky: ['15_IMM 001','16_IMM 002','17_IMM 003','18_IMM 005','19_IMM 006','20_IMM 007','21_IMM 008','22_IMM 009','23_IMM 010','24_IMM 011','25_IMM 012'] },
   { name: 'Olha Drozdova', coord: 'Bohuš Móri', linky: ['15_IMM 001','16_IMM 002','17_IMM 003','18_IMM 005','19_IMM 006','20_IMM 007','21_IMM 008','22_IMM 009','23_IMM 010','24_IMM 011','25_IMM 012'] },
   { name: 'Olha Mamaievska', coord: 'Bohuš Móri', linky: ['15_IMM 001','16_IMM 002','17_IMM 003','18_IMM 005','19_IMM 006','20_IMM 007','21_IMM 008','22_IMM 009','23_IMM 010','24_IMM 011','25_IMM 012'] }
 ];
@@ -7043,6 +7042,11 @@ const AGENCY_TRAINERS = SEED_AGENCY_TRAINERS.map(x => ({ ...x }));
 //  1) currentUser = odešlý koordinátor → přepnout na prvního platného
 //  2) roster obsahuje TL/trenéry pod odešlým koordinátorem → přemapovat na nástupce
 const DEPARTED_COORDS = { 'Septimiu Claudiu Molnar': 'Bohuš Móri' };
+// v129: Odešlí Team Leadeři. V aktivním rosteru už nejsou — neplánují se jim
+// audity ani nefigurují ve výběrech. Jméno se ale drží kvůli pseudonymizaci:
+// mapa kód→jméno se staví hashováním známých jmen, takže bez téhle položky
+// by se v historických auditech a nálezech místo jména ukázal holý kód.
+const DEPARTED_TLS = ['Jakub Růžička'];
 
 function migrateDepartedCoordinators() {
   let changed = 0;
@@ -7574,6 +7578,8 @@ function buildPseudoMaps() {
   TLS.forEach(t => names.add(t.name));
   // v94: trenéři — aby dekódování fungovalo hned po startu
   (typeof TRAINERS !== 'undefined' ? TRAINERS : []).forEach(t => names.add(t.name));
+  // v129: odešlí TL — drží se jen kvůli dekódování historických záznamů
+  (typeof DEPARTED_TLS !== 'undefined' ? DEPARTED_TLS : []).forEach(n => names.add(n));
   const enc = {}, dec = {};
   names.forEach(n => { const code = pseudoHash(n); enc[n] = code; dec[code] = n; });
   return { enc, dec };
