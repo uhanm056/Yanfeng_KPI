@@ -6871,7 +6871,9 @@ window.PE = {
 
 <script>
 // v100: Claudio (Septimiu Claudiu Molnar) odešel z firmy — jeho TL přešli pod Bohuše Móriho.
-const COORDINATORS = ['Nikola Hanusová','Martina Mlejnková','Bohuš Móri'];
+// v127: Maksim Bogdanov — v tréninku na koordinátora, převzal procesy
+// Slush 1/2 a Foaming 1/2 (dříve Bohuš Móri). Z role TL vyřazen.
+const COORDINATORS = ['Nikola Hanusová','Martina Mlejnková','Bohuš Móri','Maksim Bogdanov'];
 
 // v42: Statusy opatření (PDCA workflow)
 const ACTION_STATUSES = [
@@ -6938,15 +6940,14 @@ const ALL_AUDITORS = [...COORDINATORS, ...OPERATIONS_MANAGERS];
 const SEED_TLS = [
   { name: 'Anis Abdessalem Lammouchi', coord: 'Nikola Hanusová', linky: ['26_G463'] },
   { name: 'Krisztian Bencze', coord: 'Nikola Hanusová', linky: ['27_Prefix G463'] },
-  { name: 'Maksim Bogdanov', coord: 'Nikola Hanusová', linky: ['27_Prefix G463'] },
   { name: 'Marija Malinová Vasić', coord: 'Nikola Hanusová', linky: ['27_Prefix G463'] },
   { name: 'Petra Svobodová', coord: 'Nikola Hanusová', linky: ['27_Prefix G463'] },
   { name: 'Petro Yaremchuk', coord: 'Nikola Hanusová', linky: ['26_G463'] },
-  { name: 'David Fořter', coord: 'Bohuš Móri', linky: ['06_Slush 1','07_Slush 2'] },
-  { name: 'Ivan Zubryn', coord: 'Bohuš Móri', linky: ['10_Foaming 1','11_Foaming 2','06_Slush 1'] },
-  { name: 'Jan Kůs', coord: 'Bohuš Móri', linky: ['10_Foaming 1','11_Foaming 2','06_Slush 1'] },
-  { name: 'Monika Valnohová', coord: 'Bohuš Móri', linky: ['06_Slush 1','07_Slush 2'] },
-  { name: 'Sergiu-Gabriel Olaru', coord: 'Bohuš Móri', linky: ['10_Foaming 1','11_Foaming 2','06_Slush 1'] },
+  { name: 'David Fořter', coord: 'Maksim Bogdanov', linky: ['06_Slush 1','07_Slush 2'] },
+  { name: 'Ivan Zubryn', coord: 'Maksim Bogdanov', linky: ['10_Foaming 1','11_Foaming 2','06_Slush 1'] },
+  { name: 'Jan Kůs', coord: 'Maksim Bogdanov', linky: ['10_Foaming 1','11_Foaming 2','06_Slush 1'] },
+  { name: 'Monika Valnohová', coord: 'Maksim Bogdanov', linky: ['06_Slush 1','07_Slush 2'] },
+  { name: 'Sergiu-Gabriel Olaru', coord: 'Maksim Bogdanov', linky: ['10_Foaming 1','11_Foaming 2','06_Slush 1'] },
   { name: 'Barbora Kosová', coord: 'Martina Mlejnková', linky: ['04_W177 IP','05_W247 IP'] },
   { name: 'Eugenia Lizak', coord: 'Martina Mlejnková', linky: ['01_SK336'] },
   { name: 'Jan Kocmich', coord: 'Martina Mlejnková', linky: ['01_SK336','28_W206 IP'] },
@@ -6994,10 +6995,10 @@ const SEED_LINES = [
   { kod: '05_W247 IP',     coord: 'Martina Mlejnková', oblast: 'IP / ASSY' },
   { kod: '28_W206 IP',     coord: 'Martina Mlejnková', oblast: 'IP / ASSY' },
   { kod: '29_X540 IP',     coord: 'Nikola Hanusová',   oblast: 'IP / ASSY', popis: 'Sdílená linka — platformy X540 a W520' },
-  { kod: '06_Slush 1',     coord: 'Bohuš Móri',        oblast: 'Slush' },
-  { kod: '07_Slush 2',     coord: 'Bohuš Móri',        oblast: 'Slush' },
-  { kod: '10_Foaming 1',   coord: 'Bohuš Móri',        oblast: 'Foaming' },
-  { kod: '11_Foaming 2',   coord: 'Bohuš Móri',        oblast: 'Foaming' },
+  { kod: '06_Slush 1',     coord: 'Maksim Bogdanov',        oblast: 'Slush' },
+  { kod: '07_Slush 2',     coord: 'Maksim Bogdanov',        oblast: 'Slush' },
+  { kod: '10_Foaming 1',   coord: 'Maksim Bogdanov',        oblast: 'Foaming' },
+  { kod: '11_Foaming 2',   coord: 'Maksim Bogdanov',        oblast: 'Foaming' },
   { kod: '30_Scoring',     coord: 'Bohuš Móri',        oblast: 'Scoring / Šití' },
   { kod: '31_Sewing',      coord: 'Bohuš Móri',        oblast: 'Scoring / Šití' },
   { kod: '26_G463',        coord: 'Nikola Hanusová',   oblast: 'G463' },
@@ -9374,7 +9375,8 @@ function renderTrendBlendedChart() {
   const ctx = document.getElementById('chart-trend-blended').getContext('2d');
   const weeks = getWeeksRange();
   const labels = weeks.map(w => `CW${w}`);
-  const colors = { 'Nikola Hanusová': '#A78BFA', 'Martina Mlejnková': '#FBBF24', 'Bohuš Móri': '#F87171' };
+  const colors = { 'Nikola Hanusová': '#A78BFA', 'Martina Mlejnková': '#FBBF24',
+                 'Bohuš Móri': '#F87171', 'Maksim Bogdanov': '#38BDF8' };
   const datasets = COORDINATORS.map(coord => {
     const data = weeks.map(w => {
       const m = metricsForCoord(coord, [w]);
