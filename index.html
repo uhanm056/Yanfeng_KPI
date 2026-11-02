@@ -10697,7 +10697,8 @@ document.querySelectorAll('[data-quick]').forEach(b => {
   b.addEventListener('click', () => {
     const days = parseInt(b.dataset.quick);
     const to = new Date();
-    const from = new Date(Date.now() - days * 86400000);
+    // v130: posun po kalendářních dnech, ať přes přechod času nevyjde jiný den
+    const from = new Date(); from.setDate(from.getDate() - days);
     state.ui.filterDateRange = {
       from: toDateStr(from),
       to:   toDateStr(to)
@@ -12205,10 +12206,13 @@ function renderKalendarMonth() {
   // Grid starts from Monday before/on first day
   const gridStart = new Date(year, month - 1, 1 - firstDayWeekIdx);
   // 6 rows × 7 days = 42 cells
+  // v130: krokuje se po KALENDÁŘNÍCH dnech. Přičítání 86400000 ms selhalo na
+  // konci letního času: den přechodu má 25 hodin, takže +24 h skončilo ve
+  // stejném dni ve 23:00. V říjnu 2026 se tím 25. objevil dvakrát a zbytek
+  // měsíce se posunul o sloupec (26. vyšlo na úterý místo pondělí).
   const cells = [];
   for (let i = 0; i < 42; i++) {
-    const d = new Date(gridStart.getTime() + i * 86400000);
-    cells.push(d);
+    cells.push(new Date(year, month - 1, 1 - firstDayWeekIdx + i));
   }
 
   const weekdayNames = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
