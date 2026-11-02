@@ -12122,6 +12122,15 @@ function isoWeekFromDateObj(d) {
   if (target.getDay() !== 4) target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
   return 1 + Math.ceil((firstThursday - target) / 604800000);
 }
+// v131: ISO rok dne. ISO týden může patřit do jiného roku než kalendářní —
+// 1. 1. 2027 je pátek a spadá do CW53 roku 2026. Párovat ISO týden
+// s getFullYear() proto odskakovalo o celý rok (týdenní pohled na 1. 1. 2027
+// ukazoval leden 2028). ISO rok je rok čtvrtka daného týdne.
+function isoYearFromDateObj(d) {
+  const t = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  t.setDate(t.getDate() - ((d.getDay() + 6) % 7) + 3);
+  return t.getFullYear();
+}
 function dateForDayInWeek(year, week, dayOffset) {
   // dayOffset 0=Mon, 6=Sun
   const jan4 = new Date(Date.UTC(year, 0, 4));
@@ -12139,7 +12148,10 @@ function fmtMonthCs(year, month) {
 function planStatus(plan, todayStr) {
   const planDate = plan.date;
   const planDateObj = new Date(planDate + 'T00:00:00');
-  const year = planDateObj.getFullYear();
+  // v131: ISO rok. Audity se ukládají s getCurrentISOYear() (rok čtvrtka
+  // daného týdne), takže párovat je podle kalendářního roku znamenalo, že
+  // audit z CW53 přes přelom roku se k plánu nenašel a plán hlásil „Chybí".
+  const year = isoYearFromDateObj(planDateObj);
   const week = isoWeekFromDateObj(planDateObj);
   // Match with actual audit
   const audit = state.audits.find(a =>
@@ -12290,7 +12302,7 @@ function renderKalendarMonth() {
 
 function renderKalendarWeek() {
   const baseDate = new Date((state.ui.kalendarDate || todayStrLocal()) + 'T00:00:00');
-  const year = baseDate.getFullYear();
+  const year = isoYearFromDateObj(baseDate);  // v131: ISO rok, ne kalendářní
   const week = isoWeekFromDateObj(baseDate);
   const mondayStr = dateForDayInWeek(year, week, 0);
   const sundayStr = dateForDayInWeek(year, week, 6);
@@ -12480,11 +12492,11 @@ function openPlanModal(prefill = {}) {
     // Check for duplicate (same linka+tl+week)
     const planDate = new Date(date + 'T00:00:00');
     const planWeek = isoWeekFromDateObj(planDate);
-    const planYear = planDate.getFullYear();
+    const planYear = isoYearFromDateObj(planDate);  // v131: ISO rok
     const duplicate = state.plan.find(p => {
       const d = new Date(p.date + 'T00:00:00');
       return p.linka === linka && p.tl === tl
-          && isoWeekFromDateObj(d) === planWeek && d.getFullYear() === planYear;
+          && isoWeekFromDateObj(d) === planWeek && isoYearFromDateObj(d) === planYear;
     });
     if (duplicate) {
       if (!confirm(`Audit pro ${linka} · ${tl} už je v týdnu ${planWeek} naplánován na ${duplicate.date}. Přepsat?`)) return;
@@ -12582,6 +12594,11 @@ document.querySelectorAll('.view-btn').forEach(b => {
 document.getElementById('kal-prev').addEventListener('click', () => {
   const d = new Date((state.ui.kalendarDate || todayStrLocal()) + 'T00:00:00');
   if ((state.ui.kalendarView || 'month') === 'month') {
+    // v131: nejdřív na 1. v měsíci. setMonth() nad 31. dnem přeteče
+    // do dalšího měsíce (31. leden + 1 měsíc = 3. březen), takže
+    // listování měsíc přeskakovalo. Měsíční pohled stejně bere
+    // z kotvy jen rok a měsíc.
+    d.setDate(1);
     d.setMonth(d.getMonth() - 1);
   } else {
     d.setDate(d.getDate() - 7);
@@ -12593,6 +12610,11 @@ document.getElementById('kal-prev').addEventListener('click', () => {
 document.getElementById('kal-next').addEventListener('click', () => {
   const d = new Date((state.ui.kalendarDate || todayStrLocal()) + 'T00:00:00');
   if ((state.ui.kalendarView || 'month') === 'month') {
+    // v131: nejdřív na 1. v měsíci. setMonth() nad 31. dnem přeteče
+    // do dalšího měsíce (31. leden + 1 měsíc = 3. březen), takže
+    // listování měsíc přeskakovalo. Měsíční pohled stejně bere
+    // z kotvy jen rok a měsíc.
+    d.setDate(1);
     d.setMonth(d.getMonth() + 1);
   } else {
     d.setDate(d.getDate() + 7);
